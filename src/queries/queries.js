@@ -47,4 +47,3 @@ export {
     getArtistsQuery,
     getAlbumQuery
 }
-//{id: '1', ranking: 1, artistId: '1', yearOfRelease: 2005, name: 'Illinois', genre: ['folk', 'baroque pop', 'indie rock', 'experimental'], commentary: 'i love it'},
