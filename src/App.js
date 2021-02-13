@@ -4,7 +4,7 @@ import { ApolloProvider } from 'react-apollo';
 import AlbumList from "./components/AlbumList";
 
 const client = new ApolloClient({
-  uri: 'http://localhost:5000/graphql'
+  uri: 'https://jonofoz-favorite-albums-server.herokuapp.com/graphql'
 })
 
 function App() {
