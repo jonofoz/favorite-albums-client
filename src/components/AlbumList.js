@@ -18,12 +18,13 @@ const AlbumList = (props) => {
     }
 
     const populateAlbums = () => {
-        if (props.data.loading) {
+        if (props.data.loading || !props.data.albums) {
             return (<li>Loading albums...</li>)
         }
         else {
             const albums = props.data.albums;
             // Sort the albums by ranking before displaying
+
             albums.sort((a, b) => (a.ranking > b.ranking) ? 1 : -1);
             return (
                 albums.map(album => {
@@ -37,6 +38,7 @@ const AlbumList = (props) => {
                     )
                 })
             )
+
         }
     }
     return (
