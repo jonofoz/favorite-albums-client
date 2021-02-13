@@ -19,7 +19,7 @@ const AlbumList = (props) => {
 
     const populateAlbums = () => {
         if (props.data.loading) {
-            return(<li>Loading albums...</li>)
+            return (<li>Loading albums...</li>)
         }
         else {
             const albums = props.data.albums;

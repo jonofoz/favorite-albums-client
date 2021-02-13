@@ -1,4 +1,36 @@
 const Album = (props) => {
+
+    const getAlbumCover = async (album) => {
+        const imgElement = document.getElementById(`img-${album.id}`)
+
+        if (imgElement) {
+            if (imgElement.src.endsWith('.jpg') || imgElement.src.endsWith('.png')) {
+                return;
+            }
+            else {
+                // Slugify text:
+                async function convertToSlug(Text) {
+                    return Text
+                    .toLowerCase()
+                    .replace(/ /g, '-')
+                    .replace(/\//g, '-')
+                    .replace(/[^\w-]+/g, '')
+                    ;
+                }
+                const artist = await convertToSlug(album.artist.name);
+                const name = await convertToSlug(album.name);
+                var result = await fetch(`http://localhost:5000/album-art/${artist}/${name}`, {
+                    method: 'get',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                })
+                result = await result.json();
+                imgElement.src = result;
+            }
+        }
+    }
+
     const checkDetailsShown = (props) => {
         if (!props.showDetails) {
             return null;
@@ -6,8 +38,8 @@ const Album = (props) => {
         else {
             const album = props.album;
             return (
-                <div class="album-details">
-                    <ul class="details-genre">{
+                <div className="album-details">
+                    <ul className="details-genre">{
                         album.genre.map(g => {
                             return (<li key={g}>{g}</li>)
                         })
@@ -19,10 +51,12 @@ const Album = (props) => {
         }
     }
     const album = props.album;
+    getAlbumCover(album)
     return (
-        <div class="album-container">
-            <div class="album-header">
-                <h3><em>{album.name}</em> <span class="details-yor">({album.yearOfRelease})</span></h3>
+        <div className="album-container">
+            <img id={`img-${album.id}`} src="" />
+            <div className="album-header">
+                <h3><em>{album.name}</em> <span className="details-yor">({album.yearOfRelease})</span></h3>
                 <h3>- {album.artist.name}</h3>
             </div>
             {checkDetailsShown(props)}
