@@ -9,6 +9,7 @@ const getAlbumsQuery = gql`
         name
         genre
         commentary
+        thumbnail
         artist {
             id
             name
@@ -34,6 +35,7 @@ query($id: ID!){
         name
         genre
         commentary
+        thumbnail
         artist {
             id
             name
