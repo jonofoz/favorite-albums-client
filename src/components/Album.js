@@ -59,9 +59,9 @@ const Album = (props) => {
     return (
         <div className="album-container">
             {/* <img id={`img-${album.id}`} src={!album.thumbnail ? album.thumbnail : getAlbumCover(album)} /> */}
-            <div class="album-img-container">
+            <div className="container-album-img">
                 <img id={`album-img-${album.id}`} src={album.thumbnail || cover} />
-                <div class="bottom-right">{album.ranking}</div>
+                <div className="bottom-right">{album.ranking}</div>
             </div>
             <div className="album-header">
                 <h3><em>{album.name}</em> <span className="details-yor">({album.yearOfRelease})</span></h3>

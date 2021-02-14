@@ -36,7 +36,7 @@ code {
   cursor: pointer;
 }
 
-.album-img-container{
+.container-album-img{
   position: relative;
   text-align: center;
   font-weight: bolder;
@@ -74,4 +74,8 @@ img[id^='album-img']{
 
 ol{
   list-style: none;
+}
+
+.container-add-album{
+display: block;
 }
