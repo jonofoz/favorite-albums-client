@@ -49,9 +49,10 @@ code {
   bottom: 12px;
   right: 12px;
   font-size: 20px;
-  width: 32px;
-  height: 32px;
-  background: #eee;
+  line-height: 38px;
+  width: 42px;
+  height: 42px;
+  background: rgba(238, 238, 238, .8);
   border-radius: 50%;
   box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.7);
 }
@@ -61,12 +62,14 @@ code {
   padding: 10px;
   width: 100%;
   border-radius: 8px;
-  background-color: #eee;
+  background-color: #f8f8f8;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.1) inset;
 }
 
 img[id^='album-img']{
   width: 175px;
   border-radius: 15px;
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.5);
 }
 
 ol{
