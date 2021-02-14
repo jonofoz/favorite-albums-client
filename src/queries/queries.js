@@ -43,9 +43,57 @@ query($id: ID!){
     }
 }
 `
+const addAlbumMutation = gql`
+mutation(
+        $name: String!,
+        $artistId: ID!
+        $ranking: [Int!],
+        $genre: [String],
+        $yearOfRelease: String,
+        $commentary: String,
+        $thumbnail: String
+    ){
+    addAlbum(
+        name: $name,
+        artistId: $artistId
+        ranking: $ranking,
+        genre: $genre,
+        yearOfRelease: $yearOfRelease,
+        commentary: $commentary,
+        thumbnail: $thumbnail
+    ){
+        id
+        ranking
+        yearOfRelease
+        name
+        genre
+        commentary
+        thumbnail
+        artist {
+            id
+            name
+        }
+    }
+}
+`
+
+const addArtistMutation = gql`
+mutation(
+        $name: String!,
+    ){
+    addArtist(
+        name: $name,
+    ){
+        id
+        name
+    }
+}
+`
 
 export {
     getAlbumsQuery,
     getArtistsQuery,
-    getAlbumQuery
+    getAlbumQuery,
+    addAlbumMutation,
+    addArtistMutation
 }
