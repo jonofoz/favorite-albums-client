@@ -1,30 +1,8 @@
 import { useState, useEffect } from 'react';
+import { getAlbumCover } from '../utils/utils'
 
 const Album = (props) => {
     const [cover, setCover] = useState('');
-
-    const getAlbumCover = async (album) => {
-        // Slugify text:
-        function convertToSlug(Text) {
-            return Text
-                .toLowerCase()
-                .replace(/ /g, '-')
-                .replace(/\//g, '-')
-                .replace(/[^\w-]+/g, '')
-                ;
-        }
-        const artist = convertToSlug(album.artist.name);
-        const name = convertToSlug(album.name);
-        var result = await fetch(`http://localhost:5000/album-art/${artist}/${name}`, {
-            method: 'get',
-            headers: {
-                'Accept': 'application/json'
-            }
-        })
-            .then(res => res.json())
-            .then(result => setCover(result))
-            .catch((err) => console.log(err.message));
-    }
 
     const checkDetailsShown = (props) => {
         if (!props.showDetails) {
@@ -49,8 +27,8 @@ const Album = (props) => {
 
     useEffect(() => {
         if (!props.album.thumbnail) {
-            console.log(album.name)
-            getAlbumCover(props.album);
+            getAlbumCover(album.name, album.artist.name)
+                .then(res => setCover(res))
         }
     }, [])
 
@@ -58,7 +36,6 @@ const Album = (props) => {
     const album = props.album;
     return (
         <div className="album-container">
-            {/* <img id={`img-${album.id}`} src={!album.thumbnail ? album.thumbnail : getAlbumCover(album)} /> */}
             <div className="container-album-img">
                 <img id={`album-img-${album.id}`} src={album.thumbnail || cover} />
                 <div className="bottom-right">{album.ranking}</div>

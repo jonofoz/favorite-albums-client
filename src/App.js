@@ -13,8 +13,8 @@ function App() {
     <ApolloProvider client={client}>
       <div id="main">
         <h1>JonOfOz's Favorite Albums, Like Ever</h1>
-        <AlbumList />
         <AddAlbumForm />
+        <AlbumList />
       </div>
     </ApolloProvider>
   );

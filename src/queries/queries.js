@@ -47,9 +47,9 @@ const addAlbumMutation = gql`
 mutation(
         $name: String!,
         $artistId: ID!
-        $ranking: [Int!],
+        $ranking: Int!,
         $genre: [String],
-        $yearOfRelease: String,
+        $yearOfRelease: Int,
         $commentary: String,
         $thumbnail: String
     ){
