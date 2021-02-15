@@ -3,7 +3,7 @@ import { graphql } from 'react-apollo';
 import { flowRight as compose } from 'lodash';
 import { getArtistsQuery, addAlbumMutation, addArtistMutation } from '../queries/queries'
 
-import { getAlbumCover } from '../utils/utils';
+import { getAlbumCover, authenticateUser } from '../utils/utils';
 
 function toTitleCase(str) {
     return str.replace(
@@ -21,6 +21,7 @@ const AddAlbumForm = props => {
     const [genre, setGenre] = useState(['']);
     const [YOR, setYOR] = useState(''); // Year Of Release
     const [commentary, setCommentary] = useState('');
+    const [adminPassword, setAdminPassword] = useState('');
 
     // Get the ID of an artist based on the name. If the artist doesn't exist, create them and return their ID.
     const getArtistId = async (props) => {
@@ -65,25 +66,30 @@ const AddAlbumForm = props => {
             console.log("Year Of Release must be an integer.")
         }
         else {
-            // TODO: let user know album is being added and when it's added
-            await Promise.all([getArtistId(props), getAlbumCover(name, artist)])
-                .then(res => {
-                    props.addAlbumMutation({
-                        variables: {
-                            name: name,
-                            artistId: res[0],
-                            ranking: parseInt(ranking),
-                            yearOfRelease: parseInt(YOR),
-                            genre: genre,
-                            thumbnail: res[1],
-                            commentary: commentary
-                        }
-                    })
-
+            await authenticateUser(adminPassword)
+                .then(async res => {
+                    if (res.status == 200) {
+                        // TODO: let user know album is being added and when it's added
+                        await Promise.all([getArtistId(props), getAlbumCover(name, artist)])
+                            .then(res => {
+                                props.addAlbumMutation({
+                                    variables: {
+                                        name: name,
+                                        artistId: res[0],
+                                        ranking: parseInt(ranking),
+                                        yearOfRelease: parseInt(YOR),
+                                        genre: genre,
+                                        thumbnail: res[1],
+                                        commentary: commentary
+                                    }
+                                })
+                            })
+                            .catch((err) => { })
+                    }
                 })
-                .catch((err) => { })
         }
-    };
+    }
+
 
     return (
         <div className="container-add-album">
@@ -98,6 +104,8 @@ const AddAlbumForm = props => {
                 <input type="text" id="add-album-YOR" value={YOR} onChange={(e) => setYOR(e.target.value)}></input>
                 <label className="label-add-album" htmlFor="add-album-commentary">Commentary</label>
                 <input type="text" id="add-album-commentary" value={commentary} onChange={(e) => setCommentary(e.target.value)}></input>
+                <label className="label-add-album" htmlFor="add-album-admin-password">Admin Password</label>
+                <input type="password" id="add-album-admin-password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)}></input>
                 <button>+</button>
             </form>
         </div>
