@@ -1,16 +1,17 @@
 let server;
-switch (process.env.NODE_ENV) {
-    case 'development':
-        server = 'http://localhost:5000';
-        break
-    case 'test':
-        server = 'http://localhost:5000';
-        break
-    case 'production':
-        server = 'https://jonofoz-favorite-albums-server.herokuapp.com';
-        break
-    case 'production':
-};
+// switch (process.env.NODE_ENV) {
+//     case 'development':
+//         server = 'http://localhost:5000';
+//         break
+//     case 'test':
+//         server = 'http://localhost:5000';
+//         break
+//     case 'production':
+//         server = 'https://jonofoz-favorite-albums-server.herokuapp.com';
+//         break
+// };
+const development = false;
+server = development ? 'http://localhost:5000' : 'https://jonofoz-favorite-albums-server.herokuapp.com';
 
 // Slugify texts from query compatability
 function convertToSlug(Text) {
