@@ -44,7 +44,7 @@ code {
   height: 100%
 }
 
-.bottom-right {
+.ranking-sticker {
   position: absolute;
   bottom: 12px;
   right: 12px;
@@ -52,9 +52,22 @@ code {
   line-height: 38px;
   width: 42px;
   height: 42px;
-  background: rgba(238, 238, 238, .8);
+  background: rgba(238, 238, 238, .7);
   border-radius: 50%;
   box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.7);
+}
+
+.gold{
+  background: rgba(249, 232, 39, 1);
+  box-shadow: 2px 2px 2px rgba(196, 144, 2, 0.9);;
+}
+.silver{
+  background: rgba(213, 236, 235, 1);
+  box-shadow: 2px 2px 2px rgba(101, 142, 155, 0.9);;
+}
+.bronze{
+  background: rgba(231, 132, 19, 1);
+  box-shadow: 2px 2px 2px rgba(153, 10, 0, 0.9);;
 }
 
 .album-header{

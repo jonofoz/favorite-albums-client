@@ -4,6 +4,15 @@ import { getAlbumCover } from '../utils/utils'
 const Album = (props) => {
     const [cover, setCover] = useState('');
 
+    const {
+        id,
+        name,
+        ranking,
+        yearOfRelease,
+        thumbnail,
+        artist: {name: artistName}
+    } = props.album;
+
     const checkDetailsShown = (props) => {
         if (!props.showDetails) {
             return null;
@@ -26,23 +35,35 @@ const Album = (props) => {
     }
 
     useEffect(() => {
-        if (!props.album.thumbnail) {
-            getAlbumCover(album.name, album.artist.name)
+        if (!thumbnail) {
+            getAlbumCover(name, artistName)
                 .then(res => setCover(res))
         }
     }, [])
 
 
-    const album = props.album;
+    var medal = '';
+    switch (ranking) {
+        case 1:
+            medal = ' gold';
+            break;
+        case 2:
+            medal = ' silver';
+            break;
+        case 3:
+            medal = ' bronze';
+            break;
+    }
+
     return (
         <div className="album-container">
             <div className="container-album-img">
-                <img id={`album-img-${album.id}`} src={album.thumbnail || cover} />
-                <div className="bottom-right">{album.ranking}</div>
+                <img id={`album-img-${id}`} src={thumbnail || cover} />
+                <div className={`ranking-sticker${medal}`}>{ranking}</div>
             </div>
             <div className="album-header">
-                <h3><em>{album.name}</em> <span className="details-yor">({album.yearOfRelease})</span></h3>
-                <h3>- {album.artist.name}</h3>
+                <h3><em>{name}</em> <span className="details-yor">({yearOfRelease})</span></h3>
+                <h3>- {artistName}</h3>
                 {checkDetailsShown(props)}
             </div>
         </div>
