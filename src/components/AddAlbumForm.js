@@ -1,9 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { graphql } from 'react-apollo';
 import { flowRight as compose } from 'lodash';
-import { getArtistsQuery, addAlbumMutation, addArtistMutation } from '../queries/queries'
+import { getArtistsQuery, getAlbumsQuery, addAlbumMutation, addArtistMutation } from '../queries/queries'
 
 import { getAlbumCover, authenticateUser } from '../utils/utils';
+import useOutsideClick from './useOutsideClick';
 
 function toTitleCase(str) {
     return str.replace(
@@ -18,10 +19,16 @@ const AddAlbumForm = props => {
     const [name, setName] = useState('');
     const [artist, setArtist] = useState('');
     const [ranking, setRanking] = useState('');
-    const [genre, setGenre] = useState(['']);
     const [YOR, setYOR] = useState(''); // Year Of Release
     const [commentary, setCommentary] = useState('');
     const [adminPassword, setAdminPassword] = useState('');
+    // TODO: Actually implement genre adding
+    const [genre, setGenre] = useState(['']);
+    const [modalVisibility, setModalVisibility] = useState(false);
+    const [showAlbumBeingAdded, setShowAlbumBeingAdded] = useState(false);
+
+    const modalContainer = useRef(null);
+    const modalContent = useRef(null);
 
     // Get the ID of an artist based on the name. If the artist doesn't exist, create them and return their ID.
     const getArtistId = async (props) => {
@@ -69,10 +76,10 @@ const AddAlbumForm = props => {
             await authenticateUser(adminPassword)
                 .then(async res => {
                     if (res.status == 200) {
-                        // TODO: let user know album is being added and when it's added
                         await Promise.all([getArtistId(props), getAlbumCover(name, artist)])
                             .then(res => {
-                                props.addAlbumMutation({
+                                setShowAlbumBeingAdded(true)
+                                return props.addAlbumMutation({
                                     variables: {
                                         name: name,
                                         artistId: res[0],
@@ -81,8 +88,16 @@ const AddAlbumForm = props => {
                                         genre: genre,
                                         thumbnail: res[1],
                                         commentary: commentary
-                                    }
+                                    },
+                                    refetchQueries: [{ query: getAlbumsQuery }]
                                 })
+                            }).then(album => {
+                                setShowAlbumBeingAdded(false);
+                                setModalVisibility(false);
+                                var delay = setTimeout(() => {
+                                    document.querySelector(`#album-${album.data.addAlbum.id}`).scrollIntoView({ behavior: 'smooth' })
+                                    clearTimeout(delay);
+                                }, 250);
                             })
                             .catch((err) => { })
                     }
@@ -90,30 +105,87 @@ const AddAlbumForm = props => {
         }
     }
 
+    const showModal = () => {
+        setModalVisibility(true);
+    };
+    const hideModal = () => {
+        setModalVisibility(false);
+    };
+    useOutsideClick(modalContent, () => {
+        if (modalVisibility == true) {
+            setModalVisibility(false);
+        }
+    });
+
+    useEffect(() => {
+        if (modalVisibility) {
+            modalContainer.current.style.display = "block";
+        }
+        else {
+            modalContainer.current.style.display = "none";
+        }
+    })
 
     return (
-        <div className="container-add-album">
-            <form id="form-add-album" onSubmit={(e) => onFormSubmit(e, props)}>
-                <label className="label-add-album" htmlFor="add-album-name">Name</label>
-                <input type="text" id="add-album-name" value={name} onChange={(e) => setName(e.target.value)}></input>
-                <label className="label-add-album" htmlFor="add-album-artist">Artist</label>
-                <input type="text" id="add-album-artist" value={artist} onChange={(e) => setArtist(e.target.value)}></input>
-                <label className="label-add-album" htmlFor="add-album-ranking">Ranking</label>
-                <input type="text" id="add-album-ranking" value={ranking} onChange={(e) => setRanking(e.target.value)}></input>
-                <label className="label-add-album" htmlFor="add-album-YOR">Year Of Release</label>
-                <input type="text" id="add-album-YOR" value={YOR} onChange={(e) => setYOR(e.target.value)}></input>
-                <label className="label-add-album" htmlFor="add-album-commentary">Commentary</label>
-                <input type="text" id="add-album-commentary" value={commentary} onChange={(e) => setCommentary(e.target.value)}></input>
-                <label className="label-add-album" htmlFor="add-album-admin-password">Admin Password</label>
-                <input type="password" id="add-album-admin-password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)}></input>
-                <button>+</button>
-            </form>
+        <div className="container container-add-album">
+
+            <br />
+            <button id="myBtn" className="btn btn-primary btn-block" onClick={() => showModal()}>Add Album</button>
+            <br />
+            <div ref={modalContainer} id="myModal" className="modal">
+                <div ref={modalContent} className="modal-content">
+                    <span className="close" onClick={() => hideModal()}>&times;</span>
+                    <form id="form-add-album" onSubmit={(e) => onFormSubmit(e, props)}>
+                        <div className="form-group">
+                            <label className="label-add-album" htmlFor="add-album-name">Name</label>
+                            <input className="form-control" type="text" id="add-album-name" value={name} onChange={(e) => setName(e.target.value)}></input>
+                        </div>
+                        <div className="form-group">
+                            <label className="label-add-album" htmlFor="add-album-artist">Artist</label>
+                            <input className="form-control" type="text" id="add-album-artist" value={artist} onChange={(e) => setArtist(e.target.value)}></input>
+                        </div>
+                        <div className="form-group">
+                            <label className="label-add-album" htmlFor="add-album-ranking">Ranking</label>
+                            <input className="form-control" type="text" id="add-album-ranking" value={ranking} onChange={(e) => setRanking(e.target.value)}></input>
+                        </div>
+                        <div className="form-group">
+                            <label className="label-add-album" htmlFor="add-album-YOR">Year Of Release</label>
+                            <input className="form-control" type="text" id="add-album-YOR" value={YOR} onChange={(e) => setYOR(e.target.value)}></input>
+                        </div>
+                        <div className="form-group">
+                            <label className="label-add-album" htmlFor="add-album-commentary">Commentary</label>
+                            <input className="form-control" type="text" id="add-album-commentary" value={commentary} onChange={(e) => setCommentary(e.target.value)}></input>
+                        </div>
+                        <div className="form-group">
+                            <label className="label-add-album" htmlFor="add-album-admin-password">Admin Password</label>
+                            <input className="form-control" type="password" id="add-album-admin-password" value={adminPassword} onChange={(e) => setAdminPassword(e.target.value)}></input>
+                        </div>
+                        <button className="btn btn-primary btn-block">+</button>
+                    </form>
+                    <br />
+                    <div className="p-3">
+                        <div className="d-flex justify-content-center">
+                            <div className="p-2 spinner-border d-flex flex-column" role="status" style={{ "visibility": showAlbumBeingAdded ? "visible" : "hidden" }}>
+                                <span className="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                        <div className="d-flex justify-content-center">
+                            <div className="d-flex flex-column">
+                                <h4 style={{ "visibility": showAlbumBeingAdded ? "visible" : "hidden" }}>Adding album...</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
         </div>
     )
 }
 
 export default compose(
     graphql(getArtistsQuery, { name: "getArtistsQuery" }),
+    graphql(getAlbumsQuery, { name: "getAlbumsQuery" }),
     graphql(addAlbumMutation, { name: "addAlbumMutation" }),
     graphql(addArtistMutation, { name: "addArtistMutation" })
 )(AddAlbumForm);

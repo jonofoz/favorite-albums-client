@@ -37,7 +37,7 @@ const AlbumList = (props) => {
                     return (
                         <Draggable key={album.id} draggableId={album.id} index={index}>
                             {(provided) => (
-                                <li onClick={() => checkSelected(album.id)} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
+                                <li id={`album-${album.id}`}onClick={() => checkSelected(album.id)} ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps}>
                                     <Album
                                         album={album}
                                         showDetails={selected === album.id ? true : false}
@@ -74,10 +74,12 @@ const AlbumList = (props) => {
             <DragDropContext onDragEnd={onDragEnd}>
                 <Droppable droppableId="albums">
                     {(provided) => (
+                        <div className="container">
                         <ol {...provided.droppableProps} ref={provided.innerRef}>
                             {populateAlbums()}
                             {provided.placeholder}
                         </ol>
+                        </div>
                     )}
                 </Droppable>
             </DragDropContext>
